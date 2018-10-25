@@ -11,6 +11,8 @@ export default class Neuron {
 
 		for (let i = 0; i < weightLength; i++)
 			this._weights.push(Neuron.randomClamped());
+
+		return this;
 	}
 
 	private static randomClamped(): number {
