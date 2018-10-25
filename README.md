@@ -1,2 +1,0 @@
-# FlappyEvo
-Created with CodeSandbox
