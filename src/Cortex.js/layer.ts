@@ -12,6 +12,8 @@ export default class Layer {
 			const neuron = new Neuron().randomize(inputsLength);
 			this._neurons.push(neuron);
 		}
+
+		return this;
 	}
 
 	set neurons(neurons: Array<Neuron>) {
