@@ -1,7 +1,7 @@
 import Layer from "./layer";
-import CortexData from "./cortex_data";
+import CerebrumData from "./cerebrum_data";
 
-export default class Cortex {
+export default class Cerebrum {
 	private _layers: Array<Layer> = [];
 
 	constructor(
@@ -29,8 +29,8 @@ export default class Cortex {
 		this._layers.push(outputLayer);
 	}
 
-	export(): CortexData {
-		const data: CortexData = {
+	export(): CerebrumData {
+		const data: CerebrumData = {
 			neuronsInlayer: [],
 			neuronWeights: []
 		};
@@ -47,7 +47,7 @@ export default class Cortex {
 		return data;
 	}
 
-	import(data: CortexData) {
+	import(data: CerebrumData) {
 		this._layers = [];
 
 		let previousNeurons = 0;
