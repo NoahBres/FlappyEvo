@@ -1,1 +1,3 @@
-export default class Test {}
+export default class Game {
+	private sprites = {};
+}
