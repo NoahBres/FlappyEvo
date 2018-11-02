@@ -63,10 +63,13 @@ export default class Game {
   }
 
   restart() {
+    this._pipes = [];
+    
     for (const b of this._birds) {
       b.x = 80;
       b.y = this._canvas.height / 2;
       b.alive = true;
+      b.brain = new Cerebrum(2, [2], 2);
     }
 
     console.log("restart");
@@ -114,6 +117,24 @@ export default class Game {
       ]);
 
       if (output[0] > 0.5) b.flap();
+
+      // Check if hit pipe
+      for(let j = 0; j < this._pipes.length; j++) {
+        const p = this._pipes[j];
+        if(
+          (
+            b.x + b.width > p.x &&
+            b.y < p.y - p.opening &&
+            b.x + b.width < p.x + p.width
+          ) || (
+            b.x + b.width > p.x &&
+            b.x + b.width < p.x + p.width &&
+            b.y + b.height > p.y
+          )
+        ) {
+          b.kill();
+        }
+      }
     }
 
     // if (Math.random() < 0.9)

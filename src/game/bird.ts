@@ -39,22 +39,31 @@ export default class Bird implements Sprite {
 		this._brain = brain;
 	}
 
+	flap() {
+		if (this._y > this._height) this._gravity = this._jump;
+	}
+
+	kill() {
+		this._alive = false;
+		this._gravity = 10;
+	}
+
 	tick() {
 		if (!this._alive) {
 			this._x -= this._pipeSpeed;
 		} else if (this._y > this._yBoundary) {
-			this._alive = false;
+			this.kill();
 		} else {
 			this._gravity += this._velocity;
-			this._y += this._gravity;
 		}
+
+		if(this._alive)
+			this._y += this._gravity;
+		else if(this._y < this._yBoundary - this._height)
+			this._y += this._gravity;
 
 		// if(this._y > 512)
 		// 	this._y += this._gravity;
-	}
-
-	flap() {
-		if (this._y > 0) this._gravity = this._jump;
 	}
 
 	draw(ctx: CanvasRenderingContext2D) {
