@@ -62,7 +62,7 @@ export default class Cerebrum {
 
 			for (let j in layer.neurons) {
 				for (let k in layer.neurons[j].weights) {
-					layer.neurons[j].weights[k] = data.weights[indexWeights++];
+					layer.neurons[j].weights[k] = data.neuronWeights[indexWeights++];
 				}
 			}
 

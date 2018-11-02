@@ -1,6 +1,10 @@
 export default function preload(src: string): Promise<HTMLImageElement> {
 	return new Promise<HTMLImageElement>((resolve, reject) => {
 		const image = new Image();
+		// import(src).then(x => {
+		// 	console.log(x);
+		// });
+		// image.src = require(src);
 		image.src = src;
 
 		image.onload = function() {
