@@ -31,7 +31,7 @@ export default class Cerebrum {
 
 	export(): CerebrumData {
 		const data: CerebrumData = {
-			neuronsInlayer: [],
+			neuronsInLayer: [],
 			neuronWeights: []
 		};
 
@@ -39,7 +39,7 @@ export default class Cerebrum {
 			data.neuronsInLayer.push(this._layers[i].neurons.length);
 			for (let j in this._layers[i].neurons) {
 				for (let k in this._layers[i].neurons[j].weights) {
-					data.weights.push(this._layers[i].neurons[j].weights[k]);
+					data.neuronWeights.push(this._layers[i].neurons[j].weights[k]);
 				}
 			}
 		}

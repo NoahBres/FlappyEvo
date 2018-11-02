@@ -9,22 +9,15 @@ export default class Pipe implements Sprite {
 	private _width = 50;
 	private _height: number;
 
-<<<<<<< HEAD
 	private _speed = 3;
 
-=======
-	private _bgOffset: number;
->>>>>>> d874d296bda771a855db52a9fa4e0ed28d0113c5
 	// Size of the opening in the pipe
 	private _opening = 120;
 
 	constructor(
 		x: number,
 		maxHeight: number,
-<<<<<<< HEAD
 		speed: number,
-=======
->>>>>>> d874d296bda771a855db52a9fa4e0ed28d0113c5
 		topPipe: HTMLImageElement,
 		bottomPipe: HTMLImageElement
 	) {
@@ -32,11 +25,8 @@ export default class Pipe implements Sprite {
 		const space = maxHeight - this._opening;
 		this._y = maxHeight - space * Math.random();
 
-<<<<<<< HEAD
 		this._speed = speed;
 
-=======
->>>>>>> d874d296bda771a855db52a9fa4e0ed28d0113c5
 		this._topPipe = topPipe;
 		this._bottomPipe = bottomPipe;
 		this._height = topPipe.height;
@@ -45,11 +35,7 @@ export default class Pipe implements Sprite {
 	draw(ctx: CanvasRenderingContext2D) {
 		ctx.drawImage(
 			this._topPipe,
-<<<<<<< HEAD
 			this._x,
-=======
-			this._x - this._bgOffset,
->>>>>>> d874d296bda771a855db52a9fa4e0ed28d0113c5
 			this._y - this._opening - this._height,
 			this._width,
 			this._height
@@ -57,24 +43,17 @@ export default class Pipe implements Sprite {
 
 		ctx.drawImage(
 			this._bottomPipe,
-<<<<<<< HEAD
 			this._x,
-=======
-			this._x - this._bgOffset,
->>>>>>> d874d296bda771a855db52a9fa4e0ed28d0113c5
 			this._y,
 			this._width,
 			this._height
 		);
 	}
 
-<<<<<<< HEAD
 	tick() {
 		this._x -= this._speed;
 	}
 
-=======
->>>>>>> d874d296bda771a855db52a9fa4e0ed28d0113c5
 	get x(): number {
 		return this._x;
 	}
@@ -90,11 +69,12 @@ export default class Pipe implements Sprite {
 	get opening(): number {
 		return this._opening;
 	}
-<<<<<<< HEAD
-=======
 
-	set bgOffset(bgOffset: number) {
-		this._bgOffset = bgOffset;
+	get height(): number {
+		return this._height;
 	}
->>>>>>> d874d296bda771a855db52a9fa4e0ed28d0113c5
+
+	set height(height: number) {
+		this._height = height;
+	}
 }
