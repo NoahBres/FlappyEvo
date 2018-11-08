@@ -51,7 +51,7 @@ export default class Game {
               this._pipeSpeed,
               SpriteMap.sprites.bird.image,
               SpriteMap.sprites.bird_red.image,
-              new Cerebrum(2, [2], 2)
+              new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid)
             )
           );
         }
@@ -69,7 +69,7 @@ export default class Game {
       b.x = 80;
       b.y = this._canvas.height / 2;
       b.alive = true;
-      b.brain = new Cerebrum(2, [2], 2);
+      b.brain = new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid);
     }
 
     console.log("restart");

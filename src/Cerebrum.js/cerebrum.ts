@@ -4,10 +4,13 @@ import CerebrumData from "./cerebrum_data";
 export default class Cerebrum {
 	private _layers: Array<Layer> = [];
 
+	private _activation: (arg1: number) => number;
+
 	constructor(
 		inputsLength: number,
 		hiddenLength: number[],
-		outputLength: number
+		outputLength: number,
+		activation = Cerebrum.prototype.sigmoid
 	) {
 		const inputLayer = new Layer().randomize(inputsLength, 0);
 		this._layers.push(inputLayer);
@@ -103,6 +106,14 @@ export default class Cerebrum {
 
 	activate(i: number): number {
 		return 1 / (1 + Math.exp(-i));
+	}
+
+	sigmoid(i: number): number {
+		return 1 / (1 + Math.exp(-i));
+	}
+
+	tanh(i: number): number {
+		return Math.tanh(i);
 	}
 
 	set layers(layers: Array<Layer>) {
