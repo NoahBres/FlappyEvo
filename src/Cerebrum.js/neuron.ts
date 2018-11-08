@@ -1,6 +1,6 @@
 export default class Neuron {
 	private _value = 0;
-	private _weights: Array<number> = [];
+	private _weights: number[] = [];
 
 	constructor(weightLength: number = 0) {
 		for (let i = 0; i < weightLength; i++) this._weights.push(0);
@@ -27,11 +27,11 @@ export default class Neuron {
 		this._value = value;
 	}
 
-	get weights(): Array<number> {
+	get weights(): number[] {
 		return this._weights;
 	}
 
-	set weights(weights: Array<number>) {
+	set weights(weights: number[]) {
 		this._weights = weights;
 	}
 }

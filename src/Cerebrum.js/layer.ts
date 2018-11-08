@@ -1,9 +1,9 @@
 import Neuron from "./neuron";
 
 export default class Layer {
-	private _neurons: Array<Neuron> = [];
+	private _neurons: Neuron[] = [];
 
-	constructor(neurons: Array<Neuron> = []) {
+	constructor(neurons: Neuron[] = []) {
 		this._neurons = neurons;
 	}
 
@@ -16,11 +16,11 @@ export default class Layer {
 		return this;
 	}
 
-	set neurons(neurons: Array<Neuron>) {
+	set neurons(neurons: Neuron[]) {
 		this._neurons = neurons;
 	}
 
-	get neurons(): Array<Neuron> {
+	get neurons(): Neuron[] {
 		return this._neurons;
 	}
 }

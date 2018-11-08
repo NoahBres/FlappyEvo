@@ -2,7 +2,7 @@ import Layer from "./layer";
 import CerebrumData from "./cerebrum_data";
 
 export default class Cerebrum {
-	private _layers: Array<Layer> = [];
+	private _layers: Layer[] = [];
 
 	private _activation: (arg1: number) => number;
 
