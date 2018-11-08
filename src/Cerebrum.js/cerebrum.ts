@@ -16,7 +16,7 @@ export default class Cerebrum {
 		this._layers.push(inputLayer);
 
 		let previousLayerSize = inputsLength;
-		for (let i in hiddenLength) {
+		for (let i = 0; i < hiddenLength.length; i++) {
 			const layer = new Layer().randomize(
 				hiddenLength[i],
 				previousLayerSize
@@ -30,6 +30,8 @@ export default class Cerebrum {
 			previousLayerSize
 		);
 		this._layers.push(outputLayer);
+
+		this._activation = activation;
 	}
 
 	export(): CerebrumData {
@@ -38,10 +40,10 @@ export default class Cerebrum {
 			neuronWeights: []
 		};
 
-		for (let i in this._layers) {
+		for(let i = 0; i < this._layers.length; i++) {
 			data.neuronsInLayer.push(this._layers[i].neurons.length);
-			for (let j in this._layers[i].neurons) {
-				for (let k in this._layers[i].neurons[j].weights) {
+			for (let j = 0; j < this._layers[i].neurons.length; j++) {
+				for (let k = 0; k < this._layers[i].neurons[j].weights.length; k++) {
 					data.neuronWeights.push(this._layers[i].neurons[j].weights[k]);
 				}
 			}
@@ -57,14 +59,14 @@ export default class Cerebrum {
 		let indexWeights = 0;
 		const layers: Array<Layer> = [];
 
-		for (const i in data.neuronsInLayer) {
+		for (let i = 0; i < data.neuronsInLayer.length; i++) {
 			const layer = new Layer().randomize(
 				data.neuronsInLayer[i],
 				previousNeurons
 			);
 
-			for (let j in layer.neurons) {
-				for (let k in layer.neurons[j].weights) {
+			for (let j = 0; j < layer.neurons.length; j++) {
+				for (let k = 0; k < layer.neurons[j].weights.length; k++) {
 					layer.neurons[j].weights[k] = data.neuronWeights[indexWeights++];
 				}
 			}
@@ -75,22 +77,22 @@ export default class Cerebrum {
 	}
 
 	compute(inputs: number[]): Array<number> {
-		for (const i in inputs) {
+		for (let i = 0; i < inputs.length; i++) {
 			if (this._layers[0] && this._layers[0].neurons[i])
 				this._layers[0].neurons[i].value = inputs[i];
 		}
 
 		let previousLayer = this._layers[0];
 		for (let i = 1; i < this._layers.length; i++) {
-			for (const j in this._layers[i].neurons) {
+			for (let j = 0; j < this._layers[i].neurons.length; j++) {
 				let sum = 0;
 
-				for (const k in previousLayer.neurons)
+				for (let k = 0; k < previousLayer.neurons.length; k++)
 					sum +=
 						previousLayer.neurons[k].value *
 						this._layers[i].neurons[j].weights[k];
 
-				this._layers[i].neurons[j].value = this.activate(sum);
+				this._layers[i].neurons[j].value = this._activation.call(this, sum);
 			}
 
 			previousLayer = this._layers[i];
@@ -98,14 +100,10 @@ export default class Cerebrum {
 
 		const output: Array<number> = [];
 		const lastLayer = this._layers[this._layers.length - 1];
-		for (let i in lastLayer.neurons)
+		for (let i = 0; i < lastLayer.neurons.length; i++)
 			output.push(lastLayer.neurons[i].value);
 
 		return output;
-	}
-
-	activate(i: number): number {
-		return 1 / (1 + Math.exp(-i));
 	}
 
 	sigmoid(i: number): number {
