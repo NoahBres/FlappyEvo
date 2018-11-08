@@ -6,7 +6,7 @@ export default class NumberChromosome extends GenericChromosome<number> {
     private _round: boolean;
     private _clamp: boolean;
 
-    constructor(length, genes, score, { lowerBound = 0, upperBound = 1, round = false, clamp = false }) {
+    constructor({ lowerBound = 0, upperBound = 1, round = false, clamp = false }, length: number = 0, genes: number[] = [], score: number = 0) {
         super(length, genes, score);
 
         this._upperBound = upperBound;
@@ -31,11 +31,13 @@ export default class NumberChromosome extends GenericChromosome<number> {
     }
 
     duplicate(): NumberChromosome {
-        return new NumberChromosome(this._length, this._genes, this._fitness, {
+        return new NumberChromosome(
+        {
             lowerBound: this._lowerBound,
             upperBound: this._upperBound,
             round: this._round,
             clamp: this._clamp
-        });
+        },
+        this._length, this._genes, this._fitness);
     }
 }
