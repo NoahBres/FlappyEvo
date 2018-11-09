@@ -114,6 +114,34 @@ export default class Cerebrum {
 		return Math.tanh(i);
 	}
 
+	setWeights(weights): Cerebrum {
+		let weightsIndex = 0;
+
+		for(let i = 1; i < this._layers.length; i++) {
+			for(let j = 0; j < this._layers[i].neurons.length; j++) {
+				let d = [];
+				for(let k = 0; k < this._layers[i].neurons[j].weights.length; k++)
+					d[k] = weights[weightsIndex++];
+				this._layers[i].neurons[j].weights = d;
+			}
+		}
+
+		return this;
+	}
+
+	getWeights(): number[] {
+		let d = [];
+
+		for(let i = 1; i < this._layers.length; i++) {
+			for(let j = 0; j < this._layers[i].neurons.length; j++) {
+				for(let k = 0; k < this._layers[i].neurons[j].weights.length; k++)
+					d.push(this._layers[i].neurons[j].weights[k]);
+			}
+		}
+
+		return d;
+	}
+
 	set layers(layers: Array<Layer>) {
 		this._layers = layers;
 	}

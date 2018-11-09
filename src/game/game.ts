@@ -41,8 +41,19 @@ export default class Game {
       SpriteMap.loadSprites().then(images => {
         this._imgsLoaded = true;
 
+        this._darwin.newPopulation();
+        console.log(this._darwin);
+
+        const newGenes = this._darwin.population.getGenes();
+        console.log(newGenes);
+
         // Load birds
         for (let i = 0; i < this._darwin.populationSize; i++) {
+          let c = new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid)
+          c.setWeights(newGenes[i]);
+          console.log(newGenes[i]);
+          console.log(c.getWeights());
+          console.log(i);
           this._birds.push(
             new Bird(
               this._birdInitialX,
@@ -51,10 +62,14 @@ export default class Game {
               this._pipeSpeed,
               SpriteMap.sprites.bird.image,
               SpriteMap.sprites.bird_red.image,
-              new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid)
+              c
             )
           );
         }
+
+        console.log(this._birds);
+        for(let b of this._birds)
+          console.log(b)
 
         this.tick();
         this.draw();
