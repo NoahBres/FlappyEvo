@@ -27,6 +27,9 @@ export default class Game {
 
   private _birds: Array<Bird> = [];
   private _birdInitialX = 80;
+  private _birdYBoundary: number;
+
+  private _totalScore = 0;
 
   private _darwin: Darwin;
 
@@ -34,6 +37,8 @@ export default class Game {
     this._canvas = canvas;
     this._ctx = canvas.getContext("2d");
     this._darwin = darwin;
+
+    this._birdYBoundary = this._canvas.height - 25;
   }
 
   init() {
@@ -42,23 +47,18 @@ export default class Game {
         this._imgsLoaded = true;
 
         this._darwin.newPopulation();
-        console.log(this._darwin);
 
         const newGenes = this._darwin.population.getGenes();
-        console.log(newGenes);
 
         // Load birds
         for (let i = 0; i < this._darwin.populationSize; i++) {
           let c = new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid)
           c.setWeights(newGenes[i]);
-          console.log(newGenes[i]);
-          console.log(c.getWeights());
-          console.log(i);
           this._birds.push(
             new Bird(
               this._birdInitialX,
               this._canvas.height / 2,
-              this._canvas.height - 25,
+              this._birdYBoundary,
               this._pipeSpeed,
               SpriteMap.sprites.bird.image,
               SpriteMap.sprites.bird_red.image,
@@ -67,9 +67,6 @@ export default class Game {
           );
         }
 
-        console.log(this._birds);
-        for(let b of this._birds)
-          console.log(b)
 
         this.tick();
         this.draw();
@@ -84,14 +81,24 @@ export default class Game {
       b.x = 80;
       b.y = this._canvas.height / 2;
       b.alive = true;
-      b.brain = new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid);
+      const newGenes = this._darwin.population.getGenes();
+
+      let c = new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid)
+      // c.setWeights(newGenes[i]);
+      // console.log(newGenes[i]);
+      // console.log(c.getWeights());
+      // console.log(i);
+
+      b.brain = c;//new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid);
     }
 
+    this._totalScore = 0;
     console.log("restart");
   }
 
   tick() {
     this._bgDistance += this._bgSpeed;
+    this._totalScore++;
 
     // Pipe logic
     if (this._bgDistance % this._pipeSpawnInterval === 0) {
@@ -145,9 +152,11 @@ export default class Game {
             b.x + b.width > p.x &&
             b.x + b.width < p.x + p.width &&
             b.y + b.height > p.y
+          ) || (
+           b.y > this._birdYBoundary 
           )
         ) {
-          b.kill();
+          b.kill(this._totalScore);
         }
       }
     }

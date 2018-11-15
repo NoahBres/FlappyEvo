@@ -21,6 +21,8 @@ export default class Bird implements Sprite {
 
 	private _brain: Cerebrum;
 
+	private _score = 0;
+
 	constructor(
 		x: number,
 		y: number,
@@ -43,16 +45,15 @@ export default class Bird implements Sprite {
 		if (this._y > this._height) this._gravity = this._jump;
 	}
 
-	kill() {
+	kill(score: number = 0) {
 		this._alive = false;
 		this._gravity = 10;
+		this._score = score;
 	}
 
 	tick() {
 		if (!this._alive) {
 			this._x -= this._pipeSpeed;
-		} else if (this._y > this._yBoundary) {
-			this.kill();
 		} else {
 			this._gravity += this._velocity;
 		}
@@ -130,5 +131,9 @@ export default class Bird implements Sprite {
 
 	set brain(brain: Cerebrum) {
 		this._brain = brain;
+	}
+
+	get score(): number {
+		return this._score;
 	}
 }
