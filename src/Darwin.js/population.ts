@@ -25,10 +25,14 @@ export default class Population {
 	topChromosome() {
 		let top = this._chromosomes[0].fitness;
 		
-		let index;
-		for(index = 0; index < this._chromosomes.length; index++) {
-			let val = this._chromosomes[index].fitness;
-			top = val > top ? val : top;
+		let index = 0;
+		for(let i = 0; i < this._chromosomes.length; i++) {
+			let val = this._chromosomes[i].fitness;
+
+			if(val > top) {
+				index = i;
+				top = val;
+			}
 		}
 
 		return {
@@ -41,10 +45,14 @@ export default class Population {
 	lowestChromosome() {
 		let low = this._chromosomes[0].fitness;
 		
-		let index;
-		for(index = 0; index < this._chromosomes.length; index++) {
-			let val = this._chromosomes[index].fitness;
-			low = val < low ? val : low;
+		let index = 0;
+		for(let i = 0; i < this._chromosomes.length; i++) {
+			let val = this._chromosomes[i].fitness;
+
+			if(val < low) {
+				index = i;
+				low = val;
+			}
 		}
 
 		return {
@@ -57,6 +65,10 @@ export default class Population {
 	sort() {
 		// Sort descending. Highest fitness is in position 0
 		this._chromosomes.sort((a, b) => b.fitness - a.fitness);
+	}
+
+	setFitness(scores: number[]) {
+		this._chromosomes.forEach((val, index) => val.fitness = scores[index]);
 	}
 
 	getGenes(): number[] {

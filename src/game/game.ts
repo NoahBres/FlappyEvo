@@ -76,6 +76,9 @@ export default class Game {
 
   restart() {
     this._pipes = [];
+
+    this._darwin.setFitness(this._birds.map(x => x.score));
+    this._darwin.nextGeneration();
     
     for (const b of this._birds) {
       b.x = 80;

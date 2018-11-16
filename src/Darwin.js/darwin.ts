@@ -41,9 +41,18 @@ export default class Darwin {
 	}
 
 	nextGeneration(): Darwin {
-		
-		
+		this._population.sort();
+		console.log(this._population);
+		console.log(this._population.topChromosome())
+		console.log(this._population.lowestChromosome())
+
+		debugger;
+
 		return this;
+	}
+
+	setFitness(scores: number[]) {
+		this._population.setFitness(scores);
 	}
 
 	get populationSize(): number {
