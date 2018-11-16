@@ -51,7 +51,7 @@ export default class Game {
         const newGenes = this._darwin.population.getGenes();
 
         // Load birds
-        for (let i = 0; i < this._darwin.populationSize; i++) {
+        for (let i = 0; i < this._darwin.population.size; i++) {
           let c = new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid)
           c.setWeights(newGenes[i]);
           this._birds.push(

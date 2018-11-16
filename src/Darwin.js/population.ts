@@ -22,6 +22,10 @@ export default class Population {
 		return this;
 	}
 
+	duplicate(): Population {
+		return new Population(this._size, this._chromosomes);
+	}
+
 	topChromosome() {
 		let top = this._chromosomes[0].fitness;
 		
@@ -70,22 +74,30 @@ export default class Population {
 	setFitness(scores: number[]) {
 		this._chromosomes.forEach((val, index) => val.fitness = scores[index]);
 	}
-
+	
 	getGenes(): number[] {
 		let data = [];
 		for(const chromosome of this._chromosomes) {
 			data.push(chromosome.genes);
 		}
-
+		
 		return data;
 	}
-
+	
 	getGenesFlat(): number[] {
 		let data = [];
 		for(const chromosome of this._chromosomes) {
 			data = [...data, ...chromosome.genes];
 		}
-
+		
 		return data;
+	}
+	
+	get chromosomes(): GenericChromosome<any>[] {
+		return this._chromosomes;
+	}
+
+	get size(): number {
+		return this._chromosomes.length;
 	}
 }
