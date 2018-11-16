@@ -11,6 +11,7 @@ export default class Darwin {
 	private _newChromosomes: number;
 
 	private _selection: (chromosomes: GenericChromosome<any>[], num: number) => GenericChromosome<any>[];
+	private _crossover: (parent1: GenericChromosome<any>, parent2: GenericChromosome<any>) => GenericChromosome<any>[];
 
 	private _history: Population[] = [];
 
@@ -24,7 +25,9 @@ export default class Darwin {
 			crossoverRate = 0.9,
 			elitism = 0.1,
 			newChromosomes = 0.1,
-			selection = Darwin.selection.RouletteWheel
+			selection = Darwin.selection.RouletteWheel,
+			crossover = Darwin.crossover.SinglePoint
+
 		}: ConstructorOptions) {
 		
 		this._populationSize = populationSize;
@@ -35,6 +38,7 @@ export default class Darwin {
 		this._elitism = elitism;
 		this._newChromosomes = newChromosomes;
 		this._selection = selection;
+		this._crossover = crossover;
 	}
 
 	newPopulation(): Darwin {
@@ -72,7 +76,15 @@ export default class Darwin {
 			fresh.generate(this._templateChromosome.duplicate())
 		freshChromosomes = fresh.chromosomes;
 
-		const toBeCrossed = this._selection.apply(this, [this._population, crossCount]);
+		const toBeCrossed = this._selection.apply(this, [this._population.chromosomes, crossCount]);
+
+		for(let i = 0; i < toBeCrossed.length; i += 2) {
+			let children = this._crossover.apply(this, [toBeCrossed[i].duplicate(), toBeCrossed[i + 1].duplicate()]);
+			crossedChromosomes.push(children[0]);
+			crossedChromosomes.push(children[1]);
+		}
+
+		plebChromosomes = this._selection.apply(this, [this._population.chromosomes, plebCount]);
 
 		totalChromosomes = [...elitistChromosomes, ...freshChromosomes, ...crossedChromosomes, ...plebChromosomes];
 
@@ -169,8 +181,29 @@ export default class Darwin {
 		SinglePoint(parent1: GenericChromosome<any>, parent2: GenericChromosome<any>): GenericChromosome<any>[] {
 			let child1 = parent1.duplicate();
 			let child2 = parent2.duplicate();
+
+			let crossoverPoint = Math.floor(Math.random() * parent1.genes.length);
+
+			child1.genes = [...parent1.genes.slice(0, crossoverPoint), ...parent2.genes.slice(crossoverPoint)]
+			child2.genes = [...parent2.genes.slice(0, crossoverPoint), ...parent1.genes.slice(crossoverPoint)]
 			
-			return [];
+			return [child1, child2];
+		},
+
+		TwoPoint(parent1: GenericChromosome<any>, parent2: GenericChromosome<any>): GenericChromosome<any>[] {
+			let child1 = parent1.duplicate();
+			let child2 = parent2.duplicate();
+
+			let crossoverPoint1 = Math.floor(Math.random() * parent1.genes.length);
+			let crossoverPoint2 = Math.floor(Math.random() * parent2.genes.length);
+
+			if(crossoverPoint1 > crossoverPoint2)
+				[crossoverPoint1, crossoverPoint2] = [crossoverPoint2, crossoverPoint1];
+
+			child1.genes = [...parent1.genes.slice(0, crossoverPoint1), ...parent2.genes.slice(crossoverPoint1, crossoverPoint2 - crossoverPoint1), ...parent1.genes.slice(crossoverPoint2)]
+			child2.genes = [...parent2.genes.slice(0, crossoverPoint1), ...parent1.genes.slice(crossoverPoint1, crossoverPoint2 - crossoverPoint1), ...parent2.genes.slice(crossoverPoint2)]
+			
+			return [child1, child2];
 		}
 	}
 }
@@ -184,5 +217,6 @@ interface ConstructorOptions {
 	elitism?: number,
 	newChromosomes?: number,
 
-	selection?: (chromosomes: GenericChromosome<any>[], num: number) => GenericChromosome<any>[]
+	selection?: (chromosomes: GenericChromosome<any>[], num: number) => GenericChromosome<any>[],
+	crossover?: (parent1: GenericChromosome<any>, parent2: GenericChromosome<any>) => GenericChromosome<any>[]
 };
