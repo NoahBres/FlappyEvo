@@ -7,8 +7,8 @@ export default class Bird implements Sprite {
 
 	private _x = 80;
 	private _y = 250;
-	private _width = 40;
-	private _height = 30;
+	private _width = 34;
+	private _height = 24;
 
 	private _yBoundary = 500;
 

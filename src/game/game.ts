@@ -80,14 +80,17 @@ export default class Game {
     this._darwin.setFitness(this._birds.map(x => x.score));
     this._darwin.nextGeneration();
     
-    for (const b of this._birds) {
+    const newGenes = this._darwin.population.getGenes();
+    
+    for (const i in this._birds) {
+      const b = this._birds[i];
       b.x = 80;
       b.y = this._canvas.height / 2;
       b.alive = true;
-      const newGenes = this._darwin.population.getGenes();
 
-      let c = new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid)
-      // c.setWeights(newGenes[i]);
+      let c = new Cerebrum(2, [2], 2, Cerebrum.prototype.tanh)
+      // debugger;
+      c.setWeights(newGenes[i]);
       // console.log(newGenes[i]);
       // console.log(c.getWeights());
       // console.log(i);
@@ -203,6 +206,9 @@ export default class Game {
     for (let i = 0; i < this._pipes.length; i++) {
       this._pipes[i].draw(this._ctx);
     }
+
+    this._ctx.font = "15px Arial";
+    this._ctx.fillText(`Score: ${this._totalScore}`, 10, 20);
 
     requestAnimationFrame(() => {
       this.draw();

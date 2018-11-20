@@ -12,6 +12,7 @@ export default class Darwin {
 
 	private _selection: (chromosomes: GenericChromosome<any>[], num: number) => GenericChromosome<any>[];
 	private _crossover: (parent1: GenericChromosome<any>, parent2: GenericChromosome<any>) => GenericChromosome<any>[];
+	private _mutation: (chromosomes: GenericChromosome<number>[], chance: number, mutationRange: number) => GenericChromosome<any>[]
 
 	private _history: Population[] = [];
 
@@ -26,8 +27,8 @@ export default class Darwin {
 			elitism = 0.1,
 			newChromosomes = 0.1,
 			selection = Darwin.selection.RouletteWheel,
-			crossover = Darwin.crossover.SinglePoint
-
+			crossover = Darwin.crossover.SinglePoint,
+			mutation = Darwin.mutations.Addition
 		}: ConstructorOptions) {
 		
 		this._populationSize = populationSize;
@@ -39,6 +40,7 @@ export default class Darwin {
 		this._newChromosomes = newChromosomes;
 		this._selection = selection;
 		this._crossover = crossover;
+		this._mutation = mutation;
 	}
 
 	newPopulation(): Darwin {
@@ -88,9 +90,13 @@ export default class Darwin {
 
 		totalChromosomes = [...elitistChromosomes, ...freshChromosomes, ...crossedChromosomes, ...plebChromosomes];
 
+		totalChromosomes = this._mutation.apply(this, [totalChromosomes, this._mutationRate, this._mutationRange]);
+		
 		console.log(totalChromosomes);
 
-		debugger;
+		//debugger;
+
+		this._population = new Population(totalChromosomes.length, totalChromosomes);
 
 		return this;
 	}
@@ -206,6 +212,27 @@ export default class Darwin {
 			return [child1, child2];
 		}
 	}
+
+	static mutations = {
+		Addition(chromosomes: GenericChromosome<number>[], chance: number, mutationRange: number): GenericChromosome<any>[] {
+			for(let i = 0; i < chromosomes.length; i++) {
+				for(let j = 0; j < chromosomes[i].genes.length; j++) {
+					let rand = Math.random();
+
+					if(rand <= chance) {
+						let genes = chromosomes[i].genes;
+						let randPlus = Math.random() * mutationRange * 2 - mutationRange;
+
+						genes[j] += randPlus;
+
+						chromosomes[i].genes = genes;
+					}
+				}
+			}
+
+			return chromosomes;
+		}
+	}
 }
 
 interface ConstructorOptions {
@@ -218,5 +245,6 @@ interface ConstructorOptions {
 	newChromosomes?: number,
 
 	selection?: (chromosomes: GenericChromosome<any>[], num: number) => GenericChromosome<any>[],
-	crossover?: (parent1: GenericChromosome<any>, parent2: GenericChromosome<any>) => GenericChromosome<any>[]
+	crossover?: (parent1: GenericChromosome<any>, parent2: GenericChromosome<any>) => GenericChromosome<any>[],
+	mutation?: (chromosomes: GenericChromosome<number>[], chance: number, mutationRange: number) => GenericChromosome<any>[]
 };
