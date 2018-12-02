@@ -189,12 +189,9 @@ export default class Game {
 
     if (!this._running) return;
 
-    if (this._fps == 0) this.tick();
-    else {
-      setTimeout(() => {
-        this.tick();
-      }, 1000 / this._fps);
-    }
+    setTimeout(() => {
+      this.tick();
+    }, 1000 / this._fps);
   }
 
   draw() {
