@@ -1,16 +1,73 @@
-<html>
+<html lang="en-US">
+  <head>
+    <title>Parcel Sandbox</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="keywords"
+      content="Genetic Algorithm, Flappy Bird, Evolutionary Algorithm, Darwin, Darwin.js"
+    />
+    <meta name="description" content="Flappy Bird run by a genetic algorithm" />
+    <link rel="stylesheet" href="./main.css" type="text/css" />
+  </head>
 
-<head>
-	<title>Parcel Sandbox</title>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <body class="flex">
+    <div class="column">
+      <canvas id="canvas" width="512" height="512"></canvas>
+      <div class="flex center btn-container">
+		<p>Speed:</p>
+		<label class="speed-btn flex center">
+			<input name="speed-choice" type="radio" value="0.25">
+			  <span>0.25x</span>
+			  <div class="rippleJS"></div>
+			</input>
+		</label>
+		<label class="speed-btn flex center">
+			<input name="speed-choice" type="radio" value="0.5">
+			  <span>0.5x</span>
+			  <div class="rippleJS"></div>
+			</input>
+		</label>
+		<label class="speed-btn flex center">
+			<input name="speed-choice" type="radio" value="1" checked>
+			  <span>1x</span>
+			  <div class="rippleJS"></div>
+			</input>
+		</label>
+		<label class="speed-btn flex center">
+			<input name="speed-choice" type="radio" value="2">
+			  <span>2x</span>
+			  <div class="rippleJS"></div>
+			</input>
+		</label>
+		<label class="speed-btn flex center">
+			<input name="speed-choice" type="radio" value="5">
+			  <span>5x</span>
+			  <div class="rippleJS"></div>
+			</input>
+		</label>
+		<label class="speed-btn flex center">
+			<input name="speed-choice" type="radio" value="0">
+			  <span>Max</span>
+			  <div class="rippleJS"></div>
+			</input>
+		</label>
+	  </div>
+	  <div class="flex center">
+		  <button id="pause-btn" value="paused">
+			  <label>❚❚ Pause</label>
+			  <div class="rippleJS"></div>
+		  </button>
+	  </div>
+    </div>
+    <div class="column"></div>
 
-</head>
-
-<body>
-	<canvas id="canvas" width="512" height="512"></canvas>
-
-	<script src="src/main.ts"></script>
-</body>
-
+    <script src="src/main.ts"></script>
+    <script
+      async
+      src="https://cdn.jsdelivr.net/npm/vanilla-ripplejs@1.0.6"
+      integrity="sha384-OlarGErerEgz/M7123pQTTek4pUIiR6t0BK09bTmWDi2cZYbv3VHrriaXDnA0Oup"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

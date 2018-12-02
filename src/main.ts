@@ -1,17 +1,9 @@
-console.log("Test");
-
-import Cortex from "./Cerebrum.js/cerebrum";
-// import Darwin from "./Darwin.js/darwin";
-// import NumberChromosome from './Darwin.js/chromosomes/number_chromosome';
 import { NumberChromosome } from "darwinjs";
 import { RankSelect } from "darwinjs";
 import { UniformCross } from "darwinjs";
 import { AdditionMutate } from "darwinjs";
 
 import { Darwin } from "darwinjs";
-
-let cc = new Cortex(2, [2], 1);
-console.log(cc.compute([0.5, 0.7]));
 
 import Game from "./game/game";
 
@@ -32,6 +24,32 @@ function start() {
     mutation: AdditionMutate
   });
   const game = new Game(canvas, darwin);
+
+  const speedBtns = document.querySelectorAll('input[name="speed-choice"]');
+  speedBtns.forEach(x => {
+    x.addEventListener("change", e => {
+      e = e || window.event;
+      const target = <HTMLInputElement>(e.target || e.srcElement);
+      const value = Number(target.value);
+      e.stopImmediatePropagation();
+      game.setFPS(60 * value);
+    });
+  });
+
+  const pauseBtn = <HTMLButtonElement>document.getElementById("pause-btn");
+
+  pauseBtn.addEventListener("click", e => {
+    const value = pauseBtn.value;
+
+    let paused = value == "paused" ? true : false;
+    let text = !paused ? "❚❚ Pause" : "▶ Resume";
+    pauseBtn.value = !paused ? "paused" : "unpaused";
+    pauseBtn.innerHTML = text;
+    pauseBtn.className = !paused ? "" : "paused";
+
+    game.pause(!paused);
+  });
+
   game.init();
 }
 

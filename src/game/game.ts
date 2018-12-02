@@ -4,6 +4,7 @@ import SpriteMap from "./sprite_map";
 import Pipe from "./pipe";
 import Bird from "./bird";
 import Cerebrum from "../Cerebrum.js/cerebrum";
+import { timingSafeEqual } from "crypto";
 
 export default class Game {
   private _canvas: HTMLCanvasElement;
@@ -32,6 +33,8 @@ export default class Game {
   private _highScore = 0;
   private _alive = 0;
   private _pipeCount = 0;
+
+  private _running = false;
 
   constructor(canvas: HTMLCanvasElement, darwin: Darwin) {
     this._canvas = canvas;
@@ -65,6 +68,8 @@ export default class Game {
           );
         }
 
+        this._running = true;
+
         this.tick();
         this.draw();
       });
@@ -72,7 +77,6 @@ export default class Game {
   }
 
   restart() {
-    debugger;
     this._pipes = [];
 
     this._gameScore = 0;
@@ -183,6 +187,8 @@ export default class Game {
 
     if (this._birds.every(b => !b.alive)) this.restart();
 
+    if (!this._running) return;
+
     if (this._fps == 0) this.tick();
     else {
       setTimeout(() => {
@@ -224,5 +230,15 @@ export default class Game {
     requestAnimationFrame(() => {
       this.draw();
     });
+  }
+
+  setFPS(fps: number) {
+    this._fps = fps;
+  }
+
+  pause(pause: boolean) {
+    this._running = pause;
+
+    if(this._running) this.tick(;)
   }
 }
