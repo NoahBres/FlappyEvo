@@ -31,6 +31,7 @@ export default class Game {
   private _gameScore = 0;
   private _highScore = 0;
   private _alive = 0;
+  private _pipeCount = 0;
 
   constructor(canvas: HTMLCanvasElement, darwin: Darwin) {
     this._canvas = canvas;
@@ -64,9 +65,6 @@ export default class Game {
           );
         }
 
-        console.log(this._birds);
-        // debugger;
-
         this.tick();
         this.draw();
       });
@@ -74,10 +72,11 @@ export default class Game {
   }
 
   restart() {
+    debugger;
     this._pipes = [];
 
-    console.log("Restart");
     this._gameScore = 0;
+    this._pipeCount = 0;
 
     this._darwin.setFitness(this._birds.map(x => x.score));
     // console.log(this._birds.map(x => x.score));
@@ -130,6 +129,8 @@ export default class Game {
           bottomPipe: SpriteMap.sprites.pipebottom.image
         })
       );
+
+      this._pipeCount++;
 
       this._currPipeSpawnInterval = 0;
     }
@@ -217,6 +218,8 @@ export default class Game {
     this._ctx.font = "15px Arial";
     this._ctx.fillText(`Score: ${this._gameScore}`, 10, 20);
     this._ctx.fillText(`High Score: ${this._highScore}`, 10, 40);
+    this._ctx.fillText(`Pipes: ${this._pipeCount}`, 10, 60);
+    this._ctx.fillText(`Generation: ${this._darwin.history.length}`, 10, 80);
 
     requestAnimationFrame(() => {
       this.draw();
