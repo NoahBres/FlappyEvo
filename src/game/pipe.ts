@@ -28,6 +28,9 @@ export default class Pipe implements Sprite {
     this._speed = pipeSpeed;
     this._topPipe = topPipe;
     this._bottomPipe = bottomPipe;
+
+    this._width = topPipe.width;
+    this._height = topPipe.height;
   }
 
   tick() {
