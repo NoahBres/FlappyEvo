@@ -1,37 +1,36 @@
+import { Darwin } from "darwinjs";
+
 import SpriteMap from "./sprite_map";
 import Pipe from "./pipe";
 import Bird from "./bird";
-
-import Darwin from "../Darwin.js/darwin";
 import Cerebrum from "../Cerebrum.js/cerebrum";
 
 export default class Game {
-  private _imgsLoaded = false;
-
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
 
-  // Duration of frame
-  private _fps = 60; //1000 / (60 * 1);
-  // Offset of background
-  private _bgDistance = 0;
-  // Background speed
-  private _bgSpeed = 2;
+  private _darwin: Darwin;
 
+  private _fps = 60;
+  private _imgsLoaded = false;
+
+  private _bgSpeed = 0.5;
+  private _bgOffsetX = 0;
+
+  private _pipes: Pipe[] = [];
+  private _pipeSpawnInterval = 120;
+  private _currPipeSpawnInterval = 0;
+  private _pipeYPadding = 30;
+  private _pipeOpening = 120;
   private _pipeSpeed = 3;
 
-  // New pipe spawn interval
-  private _pipeSpawnInterval = 240;
-  // Generated pipes
-  private _pipes: Array<Pipe> = [];
-
-  private _birds: Array<Bird> = [];
+  private _birds: Bird[] = [];
   private _birdInitialX = 80;
   private _birdYBoundary: number;
 
-  private _totalScore = 0;
-
-  private _darwin: Darwin;
+  private _gameScore = 0;
+  private _highScore = 0;
+  private _alive = 0;
 
   constructor(canvas: HTMLCanvasElement, darwin: Darwin) {
     this._canvas = canvas;
@@ -46,13 +45,11 @@ export default class Game {
       SpriteMap.loadSprites().then(images => {
         this._imgsLoaded = true;
 
-        this._darwin.newPopulation();
+        this._darwin.generatePopulation();
 
         const newGenes = this._darwin.population.getGenes();
-
-        // Load birds
         for (let i = 0; i < this._darwin.population.size; i++) {
-          let c = new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid)
+          const c = new Cerebrum(2, [2], 1, Cerebrum.prototype.sigmoid);
           c.setWeights(newGenes[i]);
           this._birds.push(
             new Bird(
@@ -67,6 +64,8 @@ export default class Game {
           );
         }
 
+        console.log(this._birds);
+        // debugger;
 
         this.tick();
         this.draw();
@@ -77,100 +76,111 @@ export default class Game {
   restart() {
     this._pipes = [];
 
+    console.log("Restart");
+    this._gameScore = 0;
+
     this._darwin.setFitness(this._birds.map(x => x.score));
+    // console.log(this._birds.map(x => x.score));
     this._darwin.nextGeneration();
-    
+
     const newGenes = this._darwin.population.getGenes();
-    
+
     for (const i in this._birds) {
       const b = this._birds[i];
       b.x = 80;
       b.y = this._canvas.height / 2;
       b.alive = true;
 
-      let c = new Cerebrum(2, [2], 2, Cerebrum.prototype.tanh)
+      let c = new Cerebrum(2, [2], 1, Cerebrum.prototype.sigmoid);
       // debugger;
       c.setWeights(newGenes[i]);
       // console.log(newGenes[i]);
       // console.log(c.getWeights());
       // console.log(i);
 
-      b.brain = c;//new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid);
+      b.brain = c; //new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid);
     }
-
-    this._totalScore = 0;
-    console.log("restart");
   }
 
   tick() {
-    this._bgDistance += this._bgSpeed;
-    this._totalScore++;
+    this._bgOffsetX += this._bgSpeed;
 
-    // Pipe logic
-    if (this._bgDistance % this._pipeSpawnInterval === 0) {
+    for (let i = 0; i < this._pipes.length; i++) {
+      this._pipes[i].tick();
+      if (this._pipes[i].x + this._pipes[i].width < 0) this._pipes.splice(i, 1);
+    }
+
+    // Pipe spawning
+    if (
+      this._currPipeSpawnInterval == this._pipeSpawnInterval ||
+      this._pipes.length == 0
+    ) {
+      let constrainedHeight =
+        this._canvas.height - this._pipeYPadding * 2 - this._pipeOpening / 2;
+      let yOffset = (this._canvas.height - constrainedHeight) / 2;
+      let middleY = Math.round(Math.random() * constrainedHeight) + yOffset;
+
       this._pipes.push(
-        new Pipe(
-          this._canvas.width,
-          this._canvas.height,
-          this._pipeSpeed,
-          SpriteMap.sprites.pipetop.image,
-          SpriteMap.sprites.pipebottom.image
-        )
+        new Pipe({
+          x: this._canvas.width,
+          middleY: middleY,
+          openingSize: this._pipeOpening,
+          pipeSpeed: this._pipeSpeed,
+          topPipe: SpriteMap.sprites.pipetop.image,
+          bottomPipe: SpriteMap.sprites.pipebottom.image
+        })
       );
+
+      this._currPipeSpawnInterval = 0;
     }
 
-    for (let i = 0; i < this._pipes.length; i++) {
-      const pipe = this._pipes[i];
-      pipe.tick();
-      if (pipe.x + pipe.width < 0) this._pipes.splice(i, 1);
-    }
+    // Pipe spawning
+    this._currPipeSpawnInterval++;
 
-    let nextPipeHeight = this._canvas.height / 2;
+    let nextPipe: Pipe;
     for (let i = 0; i < this._pipes.length; i++) {
-      if (this._pipes[i].x + this._pipes[i].width > this._birdInitialX) {
-        nextPipeHeight = this._pipes[i].y;
+      if (this._birds.length <= 0) break;
+
+      if (this._pipes[i].x + this._pipes[i].width > this._birds[0].x) {
+        nextPipe = this._pipes[i];
         break;
       }
     }
 
-    // Bird logic
     for (let i = 0; i < this._birds.length; i++) {
       const b = this._birds[i];
       b.tick();
       if (!b.alive) continue;
 
-      const output = b.brain.compute([
-        b.y / this._canvas.height,
-        nextPipeHeight / this._canvas.height
-      ]);
+      // const inputs = [
+      //   b.y / this._canvas.height,
+      //   nextPipe.y / this._canvas.height
+      // ]
+      const inputs = [
+        (b.y - nextPipe.y) / (this._canvas.height / 2),
+        (b.x - nextPipe.x) / this._canvas.width
+      ];
+
+      const output = b.brain.compute(inputs);
 
       if (output[0] > 0.5) b.flap();
 
-      // Check if hit pipe
-      for(let j = 0; j < this._pipes.length; j++) {
-        const p = this._pipes[j];
-        if(
-          (
-            b.x + b.width > p.x &&
-            b.y < p.y - p.opening &&
-            b.x + b.width < p.x + p.width
-          ) || (
-            b.x + b.width > p.x &&
-            b.x + b.width < p.x + p.width &&
-            b.y + b.height > p.y
-          ) || (
-           b.y > this._birdYBoundary 
-          )
+      for (let j = 0; j < this._pipes.length; j++) {
+        if (
+          this._pipes[j].hitMe(b.x, b.y, b.width, b.height) ||
+          b.y > this._birdYBoundary
         ) {
-          b.kill(this._totalScore);
+          let score = b.y + b.height / 2 - this._pipes[j].y;
+
+          b.kill(this._gameScore);
         }
       }
     }
 
-    // if (Math.random() < 0.9)
-    // 	this._birds[Math.floor(this._birds.length * Math.random())].flap();
+    this._gameScore++;
+    this._highScore = Math.max(this._gameScore, this._highScore);
 
-    if (this._birds.every(b => b.alive == false)) this.restart();
+    if (this._birds.every(b => !b.alive)) this.restart();
 
     if (this._fps == 0) this.tick();
     else {
@@ -182,33 +192,31 @@ export default class Game {
 
   draw() {
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+    const bgSprite = SpriteMap.sprites.background.image;
     for (
       let i = 0;
-      i <
-      Math.ceil(this._canvas.width / SpriteMap.sprites.background.image.width) +
-        1;
+      i < Math.ceil(this._canvas.width / bgSprite.width) + 1;
       i++
     ) {
       this._ctx.drawImage(
-        SpriteMap.sprites.background.image,
-        i * SpriteMap.sprites.background.image.width -
-          Math.floor(
-            this._bgDistance % SpriteMap.sprites.background.image.width
-          ),
+        bgSprite,
+        i * bgSprite.width - Math.floor(this._bgOffsetX % bgSprite.width),
         0
       );
-    }
-
-    for (let i = 0; i < this._birds.length; i++) {
-      this._birds[i].draw(this._ctx);
     }
 
     for (let i = 0; i < this._pipes.length; i++) {
       this._pipes[i].draw(this._ctx);
     }
 
+    for (let i = 0; i < this._birds.length; i++) {
+      this._birds[i].draw(this._ctx);
+    }
+
     this._ctx.font = "15px Arial";
-    this._ctx.fillText(`Score: ${this._totalScore}`, 10, 20);
+    this._ctx.fillText(`Score: ${this._gameScore}`, 10, 20);
+    this._ctx.fillText(`High Score: ${this._highScore}`, 10, 40);
 
     requestAnimationFrame(() => {
       this.draw();
