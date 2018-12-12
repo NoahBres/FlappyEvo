@@ -1,4 +1,5 @@
-import { Darwin } from "darwinjs";
+import { Heredity } from "heredity";
+import { DnaViz } from "heredity";
 
 import SpriteMap from "./sprite_map";
 import Pipe from "./pipe";
@@ -10,7 +11,8 @@ export default class Game {
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
 
-  private _darwin: Darwin;
+  private _heredity: Heredity;
+  private _dnaViz: DnaViz;
 
   private _fps = 60;
   private _imgsLoaded = false;
@@ -31,15 +33,17 @@ export default class Game {
 
   private _gameScore = 0;
   private _highScore = 0;
-  private _alive = 0;
+  private _aliveCount = 0;
   private _pipeCount = 0;
 
   private _running = false;
+  private _suicideBirds = false;
 
-  constructor(canvas: HTMLCanvasElement, darwin: Darwin) {
+  constructor(canvas: HTMLCanvasElement, heredity: Heredity, dnaViz: DnaViz) {
     this._canvas = canvas;
     this._ctx = canvas.getContext("2d");
-    this._darwin = darwin;
+    this._heredity = heredity;
+    this._dnaViz = dnaViz;
 
     this._birdYBoundary = this._canvas.height - 25;
   }
@@ -49,10 +53,10 @@ export default class Game {
       SpriteMap.loadSprites().then(images => {
         this._imgsLoaded = true;
 
-        this._darwin.generatePopulation();
+        this._heredity.generatePopulation();
 
-        const newGenes = this._darwin.population.getGenes();
-        for (let i = 0; i < this._darwin.population.size; i++) {
+        const newGenes = this._heredity.population.getGenes();
+        for (let i = 0; i < this._heredity.population.size; i++) {
           const c = new Cerebrum(2, [2], 1, Cerebrum.prototype.sigmoid);
           c.setWeights(newGenes[i]);
           this._birds.push(
@@ -69,6 +73,17 @@ export default class Game {
         }
 
         this._running = true;
+        this._aliveCount = this._heredity.population.size;
+
+        this._dnaViz.onPillHover(this, chrom => {
+          const index = this._heredity.chromosomes.indexOf(chrom);
+          this._birds[index].drawRedCircle = true;
+        });
+
+        this._dnaViz.onPillHoverLeave(this, chrom => {
+          const index = this._heredity.chromosomes.indexOf(chrom);
+          this._birds[index].drawRedCircle = false;
+        });
 
         this.tick();
         this.draw();
@@ -79,14 +94,18 @@ export default class Game {
   restart() {
     this._pipes = [];
 
+    this._suicideBirds = false;
+
     this._gameScore = 0;
     this._pipeCount = 0;
 
-    this._darwin.setFitness(this._birds.map(x => x.score));
-    // console.log(this._birds.map(x => x.score));
-    this._darwin.nextGeneration();
+    this._aliveCount = this._heredity.population.size;
 
-    const newGenes = this._darwin.population.getGenes();
+    this._heredity.setFitness(this._birds.map(x => x.score));
+    // console.log(this._birds.map(x => x.score));
+    this._heredity.nextGeneration();
+
+    const newGenes = this._heredity.population.getGenes();
 
     for (const i in this._birds) {
       const b = this._birds[i];
@@ -102,6 +121,28 @@ export default class Game {
       // console.log(i);
 
       b.brain = c; //new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid);
+    }
+  }
+
+  reset() {
+    this._pipes = [];
+    this._suicideBirds = false;
+    this._gameScore = 0;
+    this._highScore = 0;
+    this._pipeCount = 0;
+    this._heredity.generatePopulation();
+
+    const newGenes = this._heredity.population.getGenes();
+
+    for (const i in this._birds) {
+      const b = this._birds[i];
+      b.x = 80;
+      b.y = this._canvas.height / 2;
+      b.alive = true;
+
+      let c = new Cerebrum(2, [2], 1, Cerebrum.prototype.sigmoid);
+      c.setWeights(newGenes[i]);
+      b.brain = c;
     }
   }
 
@@ -168,7 +209,7 @@ export default class Game {
 
       const output = b.brain.compute(inputs);
 
-      if (output[0] > 0.5) b.flap();
+      if (output[0] > 0.5 && !this._suicideBirds) b.flap();
 
       for (let j = 0; j < this._pipes.length; j++) {
         if (
@@ -178,6 +219,8 @@ export default class Game {
           let score = b.y + b.height / 2 - this._pipes[j].y;
 
           b.kill(this._gameScore);
+          this._heredity.population.chromosomes[i].tags.add("dead");
+          this._aliveCount--;
         }
       }
     }
@@ -222,7 +265,12 @@ export default class Game {
     this._ctx.fillText(`Score: ${this._gameScore}`, 10, 20);
     this._ctx.fillText(`High Score: ${this._highScore}`, 10, 40);
     this._ctx.fillText(`Pipes: ${this._pipeCount}`, 10, 60);
-    this._ctx.fillText(`Generation: ${this._darwin.history.length}`, 10, 80);
+    this._ctx.fillText(`Generation: ${this._heredity.history.length}`, 10, 80);
+    this._ctx.fillText(
+      `Alive: ${this._aliveCount}/${this._heredity.population.size}`,
+      10,
+      100
+    );
 
     requestAnimationFrame(() => {
       this.draw();
@@ -236,6 +284,10 @@ export default class Game {
   pause(pause: boolean) {
     this._running = pause;
 
-    if(this._running) this.tick(;)
+    if (this._running) this.tick();
+  }
+
+  killAll() {
+    this._suicideBirds = true;
   }
 }

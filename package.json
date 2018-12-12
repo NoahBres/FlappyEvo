@@ -1,13 +1,16 @@
 {
   "name": "flappyevo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.html",
   "scripts": {
     "start": "parcel index.html --open",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "ts": "tsc src/main.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "heredity": "^1.0.3"
+  },
   "devDependencies": {
     "parcel-bundler": "^1.6.1",
     "typescript": "^3.1.6"

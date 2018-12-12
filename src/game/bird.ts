@@ -23,6 +23,9 @@ export default class Bird implements Sprite {
 
   private _score = 0;
 
+  private _drawRedCircle = false;
+  private _redCircleRadius = 1;
+
   constructor(
     x: number,
     y: number,
@@ -88,6 +91,20 @@ export default class Bird implements Sprite {
       this._height
     );
     ctx.restore();
+
+    ctx.beginPath();
+
+    if (this._drawRedCircle) {
+      ctx.strokeStyle = "#FF0000";
+      ctx.arc(
+        this._x + this._width / 2 - this._redCircleRadius,
+        this._y + this._height / 2 - this._redCircleRadius,
+        this._width + this._redCircleRadius * 2,
+        0,
+        2 * Math.PI
+      );
+      ctx.stroke();
+    }
   }
 
   get x(): number {
@@ -136,5 +153,9 @@ export default class Bird implements Sprite {
 
   get score(): number {
     return this._score;
+  }
+
+  set drawRedCircle(drawMe: boolean) {
+    this._drawRedCircle = drawMe;
   }
 }

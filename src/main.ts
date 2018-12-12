@@ -1,29 +1,35 @@
-import { NumberChromosome } from "darwinjs";
-import { RankSelect } from "darwinjs";
-import { UniformCross } from "darwinjs";
-import { AdditionMutate } from "darwinjs";
+import { Heredity } from "heredity";
+import { NeuralChromosome } from "heredity";
+import { Mutation, Crossover, Selection } from "heredity";
 
-import { Darwin } from "darwinjs";
+import { DnaViz } from "heredity";
 
 import Game from "./game/game";
 
 function start() {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
-  const darwin = new Darwin({
+  const heredity = new Heredity({
     populationSize: 50,
-    templateChromosome: new NumberChromosome(
+    templateChromosome: new NeuralChromosome(
       {
-        lowerBound: -1,
-        upperBound: 1
+        inputLength: 2,
+        hiddenLength: [2],
+        outputLength: 1,
+        activation: NeuralChromosome.sigmoid
       },
       9
     ),
-    selection: RankSelect,
-    crossover: UniformCross,
-    mutation: AdditionMutate
+    mutationRate: 0.3,
+    selection: Selection.rankSelect,
+    crossover: Crossover.uniformCross,
+    mutation: Mutation.additionMutate
   });
-  const game = new Game(canvas, darwin);
+  const dnaViz = new DnaViz(
+    document.getElementById("dna-viz-section"),
+    heredity
+  );
+  const game = new Game(canvas, heredity, dnaViz);
 
   const speedBtns = document.querySelectorAll('input[name="speed-choice"]');
   speedBtns.forEach(x => {
@@ -38,16 +44,24 @@ function start() {
 
   const pauseBtn = <HTMLButtonElement>document.getElementById("pause-btn");
 
-  pauseBtn.addEventListener("click", e => {
+  pauseBtn.addEventListener("click", () => {
     const value = pauseBtn.value;
 
     let paused = value == "paused" ? true : false;
     let text = !paused ? "❚❚ Pause" : "▶ Resume";
     pauseBtn.value = !paused ? "paused" : "unpaused";
     pauseBtn.innerHTML = text;
-    pauseBtn.className = !paused ? "" : "paused";
+    pauseBtn.className = !paused ? "action-btn" : "action-btn paused";
 
     game.pause(!paused);
+  });
+
+  document.getElementById("killall-btn").addEventListener("click", () => {
+    game.killAll();
+  });
+
+  document.getElementById("reset-btn").addEventListener("click", () => {
+    game.reset();
   });
 
   game.init();

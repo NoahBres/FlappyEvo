@@ -19,11 +19,16 @@ html {
 
 .flex {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .flex.center {
   justify-content: center;
   align-items: center;
+}
+
+.game-cont {
+  flex: 1 1 300px;
 }
 
 #canvas {
@@ -84,11 +89,12 @@ html {
   background: #666;
 }
 
-#pause-btn {
+.action-btn {
   position: relative;
   width: 7em;
   height: 2.5em;
   padding: 0.4em 0;
+  margin: 0 0.4em;
 
   color: #fff;
 
@@ -98,9 +104,54 @@ html {
   border-radius: 4px;
 
   cursor: pointer;
+  transition: 200ms ease;
+}
+
+.action-btn:hover {
+  background: transparent !important;
 }
 
 #pause-btn.paused {
   background: #50e3c2;
   border-color: #50e3c2;
+}
+
+#killall-btn {
+  background: #ff0080;
+  border: 1px solid #ff0080;
+}
+
+#reset-btn {
+  background: #0076ff;
+  border: 1px solid #0076ff;
+}
+
+#killall-btn:hover {
+  color: #ff0080;
+}
+
+#pause-btn:hover {
+  color: #f5a623;
+}
+
+#pause-btn.paused:hover {
+  color: #50e3c2;
+}
+
+#reset-btn:hover {
+  color: #0076ff;
+}
+
+.visualizations {
+  flex: 1 1 300px;
+}
+
+.visualizations #dna-viz-section {
+  margin: 10px;
+}
+
+@media all and (max-width: 900px) {
+  .game-cont {
+    flex: 1 100%;
+  }
 }

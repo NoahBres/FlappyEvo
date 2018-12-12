@@ -5,62 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="keywords"
-      content="Genetic Algorithm, Flappy Bird, Evolutionary Algorithm, Darwin, Darwin.js"
+      content="Genetic Algorithm, Flappy Bird, Evolutionary Algorithm, Heredity"
     />
     <meta name="description" content="Flappy Bird run by a genetic algorithm" />
     <link rel="stylesheet" href="./main.css" type="text/css" />
   </head>
 
   <body class="flex">
-    <div class="column">
-      <canvas id="canvas" width="512" height="512"></canvas>
+    <div class="column game-cont">
+      <div class="flex center">
+        <canvas id="canvas" width="512" height="512"></canvas>
+      </div>
       <div class="flex center btn-container">
-		<p>Speed:</p>
-		<label class="speed-btn flex center">
-			<input name="speed-choice" type="radio" value="0.25">
-			  <span>0.25x</span>
-			  <div class="rippleJS"></div>
-			</input>
-		</label>
-		<label class="speed-btn flex center">
-			<input name="speed-choice" type="radio" value="0.5">
-			  <span>0.5x</span>
-			  <div class="rippleJS"></div>
-			</input>
-		</label>
-		<label class="speed-btn flex center">
-			<input name="speed-choice" type="radio" value="1" checked>
-			  <span>1x</span>
-			  <div class="rippleJS"></div>
-			</input>
-		</label>
-		<label class="speed-btn flex center">
-			<input name="speed-choice" type="radio" value="2">
-			  <span>2x</span>
-			  <div class="rippleJS"></div>
-			</input>
-		</label>
-		<label class="speed-btn flex center">
-			<input name="speed-choice" type="radio" value="5">
-			  <span>5x</span>
-			  <div class="rippleJS"></div>
-			</input>
-		</label>
-		<label class="speed-btn flex center">
-			<input name="speed-choice" type="radio" value="0">
-			  <span>Max</span>
-			  <div class="rippleJS"></div>
-			</input>
-		</label>
-	  </div>
-	  <div class="flex center">
-		  <button id="pause-btn" value="paused">
-			  <label>❚❚ Pause</label>
-			  <div class="rippleJS"></div>
-		  </button>
-	  </div>
+        <p>Speed:</p>
+        <label class="speed-btn flex center">
+          <input name="speed-choice" type="radio" value="0.25" />
+          <span>0.25x</span>
+          <div class="rippleJS"></div>
+        </label>
+        <label class="speed-btn flex center">
+          <input name="speed-choice" type="radio" value="0.5" />
+          <span>0.5x</span>
+          <div class="rippleJS"></div>
+        </label>
+        <label class="speed-btn flex center">
+          <input name="speed-choice" type="radio" value="1" checked />
+          <span>1x</span>
+          <div class="rippleJS"></div>
+        </label>
+        <label class="speed-btn flex center">
+          <input name="speed-choice" type="radio" value="2" /> <span>2x</span>
+          <div class="rippleJS"></div>
+        </label>
+        <label class="speed-btn flex center">
+          <input name="speed-choice" type="radio" value="5" /> <span>5x</span>
+          <div class="rippleJS"></div>
+        </label>
+        <label class="speed-btn flex center">
+          <input name="speed-choice" type="radio" value="0" /> <span>Max</span>
+          <div class="rippleJS"></div>
+        </label>
+      </div>
+      <div class="flex center">
+        <button id="killall-btn" class="action-btn">
+          <label>Kill all</label>
+          <div class="rippleJS"></div>
+        </button>
+        <button id="pause-btn" class="action-btn" value="paused">
+          <label>❚❚ Pause</label>
+          <div class="rippleJS"></div>
+        </button>
+        <button id="reset-btn" class="action-btn">
+          <label>Reset</label>
+          <div class="rippleJS"></div>
+        </button>
+      </div>
     </div>
-    <div class="column"></div>
+    <div class="column visualizations"><div id="dna-viz-section"></div></div>
 
     <script src="src/main.ts"></script>
     <script
