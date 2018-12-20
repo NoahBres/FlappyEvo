@@ -146,12 +146,43 @@ html {
   flex: 1 1 300px;
 }
 
-.visualizations #dna-viz-section {
+.visualizations #dna-viz-section,
+.visualizations #perceptron-viz-section {
   margin: 10px;
 }
 
+.row {
+  flex-direction: row;
+  width: 100%;
+
+  margin: 0.4em;
+}
+
+.row div {
+  margin: 0.25em;
+}
+
+#perceptron-viz-section,
+#top-gene-viz-section {
+  flex: 1 0 0;
+}
+
+#top-gene-viz-section {
+  background: blue;
+  min-height: 200px;
+}
+
 @media all and (max-width: 900px) {
+  body {
+    flex-direction: column;
+  }
+
   .game-cont {
+    flex: 1 100%;
+  }
+
+  #perceptron-viz-section,
+  #top-gene-viz-section {
     flex: 1 100%;
   }
 }

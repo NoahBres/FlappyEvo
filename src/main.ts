@@ -2,7 +2,7 @@ import { Heredity } from "heredity";
 import { NeuralChromosome } from "heredity";
 import { Mutation, Crossover, Selection } from "heredity";
 
-import { DnaViz } from "heredity";
+import { DnaViz, PerceptronViz } from "heredity";
 
 import Game from "./game/game";
 
@@ -18,17 +18,30 @@ function start() {
         outputLength: 1,
         activation: NeuralChromosome.sigmoid
       },
-      9
+      6
     ),
     mutationRate: 0.3,
-    selection: Selection.rankSelect,
+    selection: Selection.topSelect,
     crossover: Crossover.uniformCross,
     mutation: Mutation.additionMutate
   });
+
   const dnaViz = new DnaViz(
     document.getElementById("dna-viz-section"),
     heredity
   );
+
+  const perceptronViz = new PerceptronViz(
+    document.getElementById("perceptron-viz-section"),
+    heredity,
+    {
+      index: 0,
+      threshhold: i => i > 0.5
+    }
+  );
+
+  perceptronViz.link(dnaViz);
+
   const game = new Game(canvas, heredity, dnaViz);
 
   const speedBtns = document.querySelectorAll('input[name="speed-choice"]');

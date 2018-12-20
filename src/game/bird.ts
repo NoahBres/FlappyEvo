@@ -1,5 +1,5 @@
 import Sprite from "./sprite";
-import Cerebrum from "../Cerebrum.js/cerebrum";
+import Cerebrum from "heredity";
 
 export default class Bird implements Sprite {
   private _image: HTMLImageElement;

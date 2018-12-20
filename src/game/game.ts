@@ -4,8 +4,6 @@ import { DnaViz } from "heredity";
 import SpriteMap from "./sprite_map";
 import Pipe from "./pipe";
 import Bird from "./bird";
-import Cerebrum from "../Cerebrum.js/cerebrum";
-import { timingSafeEqual } from "crypto";
 
 export default class Game {
   private _canvas: HTMLCanvasElement;
@@ -57,8 +55,7 @@ export default class Game {
 
         const newGenes = this._heredity.population.getGenes();
         for (let i = 0; i < this._heredity.population.size; i++) {
-          const c = new Cerebrum(2, [2], 1, Cerebrum.prototype.sigmoid);
-          c.setWeights(newGenes[i]);
+          this._heredity.chromosomes[i].setWeights(newGenes[i]);
           this._birds.push(
             new Bird(
               this._birdInitialX,
@@ -67,7 +64,7 @@ export default class Game {
               this._pipeSpeed,
               SpriteMap.sprites.bird.image,
               SpriteMap.sprites.bird_red.image,
-              c
+              this._heredity.chromosomes[i]
             )
           );
         }
@@ -113,14 +110,13 @@ export default class Game {
       b.y = this._canvas.height / 2;
       b.alive = true;
 
-      let c = new Cerebrum(2, [2], 1, Cerebrum.prototype.sigmoid);
       // debugger;
-      c.setWeights(newGenes[i]);
+      this._heredity.chromosomes[i].setWeights(newGenes[i]);
       // console.log(newGenes[i]);
       // console.log(c.getWeights());
       // console.log(i);
 
-      b.brain = c; //new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid);
+      b.brain = this._heredity.chromosomes[i]; //new Cerebrum(2, [2], 2, Cerebrum.prototype.sigmoid);
     }
   }
 
@@ -140,9 +136,8 @@ export default class Game {
       b.y = this._canvas.height / 2;
       b.alive = true;
 
-      let c = new Cerebrum(2, [2], 1, Cerebrum.prototype.sigmoid);
-      c.setWeights(newGenes[i]);
-      b.brain = c;
+      this._heredity.chromosomes[i].setWeights(newGenes[i]);
+      b.brain = this._heredity.chromosomes[i];
     }
   }
 
