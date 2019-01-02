@@ -147,7 +147,9 @@ html {
 }
 
 .visualizations #dna-viz-section,
-.visualizations #perceptron-viz-section {
+.visualizations #perceptron-viz-section,
+.visualizations #top-genes-viz-section,
+.visualizations #chart-viz-section {
   margin: 10px;
 }
 
@@ -162,13 +164,11 @@ html {
   margin: 0.25em;
 }
 
-#perceptron-viz-section,
-#top-gene-viz-section {
+/* #chart-viz-section {
   flex: 1 0 0;
-}
+} */
 
-#top-gene-viz-section {
-  background: blue;
+#chart-viz-section {
   min-height: 200px;
 }
 
@@ -181,8 +181,8 @@ html {
     flex: 1 100%;
   }
 
-  #perceptron-viz-section,
-  #top-gene-viz-section {
+  /* #perceptron-viz-section,
+  #top-genes-viz-section {
     flex: 1 100%;
-  }
+  } */
 }

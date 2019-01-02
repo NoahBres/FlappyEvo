@@ -2,7 +2,7 @@ import { Heredity } from "heredity";
 import { NeuralChromosome } from "heredity";
 import { Mutation, Crossover, Selection } from "heredity";
 
-import { DnaViz, PerceptronViz } from "heredity";
+import { DnaViz, PerceptronViz, TopGenesViz, ChartViz } from "heredity";
 
 import Game from "./game/game";
 
@@ -36,11 +36,21 @@ function start() {
     heredity,
     {
       index: 0,
-      threshhold: i => i > 0.5
+      threshhold: (i: number) => i > 0.5
     }
   );
 
   perceptronViz.link(dnaViz);
+
+  const topGenesViz = new TopGenesViz(
+    document.getElementById("top-genes-viz-section"),
+    heredity
+  );
+
+  const chartViz = new ChartViz(
+    document.getElementById("chart-viz-section"),
+    heredity
+  );
 
   const game = new Game(canvas, heredity, dnaViz);
 

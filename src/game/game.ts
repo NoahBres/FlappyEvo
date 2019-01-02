@@ -211,9 +211,11 @@ export default class Game {
           this._pipes[j].hitMe(b.x, b.y, b.width, b.height) ||
           b.y > this._birdYBoundary
         ) {
-          let score = b.y + b.height / 2 - this._pipes[j].y;
+          let score = Math.abs(b.y + b.height / 2 - this._pipes[j].y);
+          score /= this._canvas.height;
+          score *= 10;
 
-          b.kill(this._gameScore);
+          b.kill(this._gameScore - score);
           this._heredity.population.chromosomes[i].tags.add("dead");
           this._aliveCount--;
         }
